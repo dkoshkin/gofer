@@ -15,13 +15,13 @@ As the project grew the process of checking for new docker image versions and Gi
 
 ## Usage
 
-1) Initialize an empty config file in `./gopher/config.yaml`
+1) Initialize an empty config file in `./gofer/config.yaml`
 
 ```
-docker run -v $(pwd):/gofer dkoshkin/gofer init -f ./.gopher/config.yaml
+docker run -v $(pwd):/gofer dkoshkin/gofer init -f ./.gofer/config.yaml
 ```
 
-Will result in `./gopher/config.yaml`:
+Will result in `./gofer/config.yaml`:
 
 ```
 apiversion: v0.1
@@ -36,7 +36,7 @@ The `--type` will be inferred from the `name` but can be set explicitly or set t
 docker run -v $(pwd):/gofer dkoshkin/gofer add busybox 1.28.1 --mask "1.28.[0-9]+" --type docker
 ```
 
-Will result in `./gopher/config.yaml`:
+Will result in `./gofer/config.yaml`:
 
 ```
 apiversion: v0.1
@@ -57,7 +57,7 @@ export GOOGLE_ACCESS_TOKEN=`gcloud auth print-access-token`
 docker run -v $(pwd):/gofer -e GOOGLE_ACCESS_TOKEN=$GOOGLE_ACCESS_TOKEN dkoshkin/gofer dig
 ```
 
-Will result in `./gopher/config.yaml`:
+Will result in `./gofer/config.yaml`:
 
 ```
 apiversion: v0.1
@@ -70,7 +70,7 @@ dependecies:
 ```
 
 ### Example
-A more complete `config.yaml` example available [here](https://raw.githubusercontent.com/dkoshkin/gopher/master/config.yaml.sample).
+A more complete `config.yaml` example available [here](https://raw.githubusercontent.com/dkoshkin/gofer/master/config.yaml.sample).
 
 ## Development
 

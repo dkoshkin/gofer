@@ -15,7 +15,7 @@ const (
 )
 
 func TestInit(t *testing.T) {
-	f := filepath.Join(os.TempDir(), fmt.Sprintf("gopherfiletesthappy%d", time.Now().UnixNano()))
+	f := filepath.Join(os.TempDir(), fmt.Sprintf("goferfiletesthappy%d", time.Now().UnixNano()))
 	mngr := NewFileManager(f)
 	manifest, err := mngr.Init(version)
 	if err != nil {
@@ -30,7 +30,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestInitDirectoryExists(t *testing.T) {
-	f := filepath.Join(os.TempDir(), fmt.Sprintf("gopherfiletesthappy%d", time.Now().UnixNano()))
+	f := filepath.Join(os.TempDir(), fmt.Sprintf("goferfiletesthappy%d", time.Now().UnixNano()))
 	mngr := NewFileManager(f)
 	manifest, err := mngr.Init(version)
 	if err != nil {
@@ -44,7 +44,7 @@ func TestInitDirectoryExists(t *testing.T) {
 	}
 }
 func TestInitFileExists(t *testing.T) {
-	f, err := ioutil.TempFile(os.TempDir(), "gopherfiletestfileexists")
+	f, err := ioutil.TempFile(os.TempDir(), "goferfiletestfileexists")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +59,7 @@ func TestInitFileExists(t *testing.T) {
 }
 
 func TestInitFileExistsAsDirectory(t *testing.T) {
-	f, err := ioutil.TempDir(os.TempDir(), "gopherfiletestfileexistsasdirectory")
+	f, err := ioutil.TempDir(os.TempDir(), "goferfiletestfileexistsasdirectory")
 	if err != nil {
 		t.Fatal(err)
 	}

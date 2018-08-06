@@ -49,7 +49,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "f", "./.gopher/config.yaml", "config file containing the list of dependencies")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "f", "./.gofer/config.yaml", "config file containing the list of dependencies")
 }
 
 // initConfig reads in config file and ENV variables if set.
