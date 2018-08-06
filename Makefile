@@ -17,7 +17,7 @@ test:
 		-v "$(shell pwd)":/go/src/$(PKG)    \
 		-w /go/src/$(PKG)                   \
 		dkoshkin/golang-dev:1.10.3-alpine   \
-		go test ./cmd/... ./pkg/...
+		go test -v ./cmd/... ./pkg/...
 
 .PHONY: vendor
 vendor:
@@ -32,3 +32,7 @@ vendor:
 push:
 	docker push $(CONTAINER):$(VERSION)
 	docker push $(CONTAINER):latest
+
+release:
+	docker tag $(CONTAINER) $(CONTAINER):$(TAG)
+	docker push $(CONTAINER):$(TAG)
