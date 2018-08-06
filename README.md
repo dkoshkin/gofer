@@ -69,6 +69,9 @@ dependecies:
   mask: 1.28.[0-9]+
 ```
 
+### Example
+A more complete `config.yaml` example available [here](https://raw.githubusercontent.com/dkoshkin/gopher/master/config.yaml.sample).
+
 ## Development
 
 ```
