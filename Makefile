@@ -4,7 +4,7 @@ endif
 ifeq ($(origin TARGET_GOOS), undefined)
     TARGET_GOOS := $(shell go env GOOS)
 endif
-ifeq ($(origin GOARCH), undefined)
+ifeq ($(origin TARGE_GOARCH), undefined)
 	TARGE_GOARCH := $(shell go env GOARCH)
 endif
 
@@ -28,8 +28,10 @@ build-binary:
 		-e GOOS=$(TARGET_GOOS)				\
 		-e GOARCH=$(TARGE_GOARCH)			\
 		dkoshkin/golang-dev:1.10.3-alpine   \
-		go build -o bin/gofer-$(TARGET_GOOS)-$(TARGE_GOARCH) main.go
-	@echo "built 'bin/gofer-$(TARGET_GOOS)-$(TARGE_GOARCH)' successfully"
+		make build-binary-local
+
+build-binary-local:
+	go build -o bin/gofer-$(TARGET_GOOS)-$(TARGE_GOARCH) main.go
 
 build-all: build-container build-binaries
 
@@ -41,7 +43,10 @@ test:
 		-v "$(shell pwd)":/go/src/$(PKG)    \
 		-w /go/src/$(PKG)                   \
 		dkoshkin/golang-dev:1.10.3-alpine   \
-		go test -v ./cmd/... ./pkg/...
+		make test-local
+
+test-local: 
+	go test -v ./cmd/... ./pkg/...
 
 .PHONY: vendor
 vendor:
@@ -50,8 +55,11 @@ vendor:
 		-it                                 \
 		-v "$(shell pwd)":/go/src/$(PKG)    \
 		-w /go/src/$(PKG)                   \
-		dkoshkin/dep:v0.5.0-1.10.3-alpine   \
-		ensure -v
+		dkoshkin/dep-dev:v0.5.0-1.10.3-alpine   \
+		make vendor-local
+
+vendor-local:
+	dep ensure -v
 
 push:
 	docker push $(CONTAINER):latest

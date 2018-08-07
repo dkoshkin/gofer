@@ -2,7 +2,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 #
-# TODO figure out why make targest aren't working
+# Mounting volumes is not supported, just run the same commands in the CI container
 version: 2
 jobs:
   build:
@@ -17,10 +17,10 @@ jobs:
       # specify any bash command here prefixed with `run: `
       - run: 
           name: Vendor Go dependencies
-          command: dep ensure -v
+          command: make vendor-local
       - run: 
           name: Unit test
-          command: go test -v ./cmd/... ./pkg/...
+          command: make test-local
       - run: 
           name: Build container 
           command: make build-container
@@ -33,8 +33,8 @@ jobs:
             if [[ -n "$CIRCLE_TAG" ]]
             then
               VERSION=$CIRCLE_TAG make tag-and-push
-              GOOS=darwin GOARCH=amd64 go build -o bin/gofer-darwin-amd64 main.go
-              GOOS=linux GOARCH=amd64 go build -o bin/gofer-linux-amd64 main.go
+              TARGET_GOOS=darwin TARGE_GOARCH=amd64 make build-binary-local
+              TARGET_GOOS=linux TARGE_GOARCH=amd64 make build-binary-local
               ghr -draft -u "$CIRCLE_PROJECT_USERNAME" "$CIRCLE_TAG" bin/
             fi
 
