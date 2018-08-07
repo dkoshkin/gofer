@@ -15,10 +15,26 @@ As the project grew the process of checking for new docker image versions and Gi
 
 ## Prerequisites
 
-* `docker`
+### Using a Docker container
+
+* `docker` installed
 * if desired add command to your path:
 ```
-echo 'docker run -v $(pwd):/gofer -e GOOGLE_ACCESS_TOKEN=$GOOGLE_ACCESS_TOKEN dkoshkin/gofer "$@" ' > /usr/local/bin/gofer && chmod +x /usr/local/bin/gofer
+echo 'docker run                                    \
+  -v $(pwd):/gofer                                  \
+  -e GOOGLE_ACCESS_TOKEN=$GOOGLE_ACCESS_TOKEN       \
+  dkoshkin/gofer:v0.1 $@ ' > /usr/local/bin/gofer   \
+&& chmod +x /usr/local/bin/gofer
+```
+
+### Using a binary
+
+* a Linux or macOS
+```
+# for Linux
+wget https://github.com/dkoshkin/gofer/releases/download/v0.1/gofer-linux-amd64 -O /usr/local/bin/gofer
+# for macOS
+wget https://github.com/dkoshkin/gofer/releases/download/v0.1/gofer-darwin-amd64 -O /usr/local/bin/gofer
 ```
 
 ## Usage
@@ -85,5 +101,8 @@ A more complete `config.yaml` example available [here](https://raw.githubusercon
 ```
 make vendor
 make test
-make build
+# build a docker container
+make build-container
+# or build a binary to bin/
+make build-binary
 ```

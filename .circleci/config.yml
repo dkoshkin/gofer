@@ -1,6 +1,8 @@
 # Golang CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
+#
+# TODO figure out why make targest aren't working
 version: 2
 jobs:
   build:
@@ -13,21 +15,27 @@ jobs:
       - setup_remote_docker
 
       # specify any bash command here prefixed with `run: `
-      - run: dep ensure -v
-      - run: go test -v ./cmd/... ./pkg/...
-
-      - run: make build
-
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS 
-      - run: make push
-
+      - run: 
+          name: Vendor Go dependencies
+          command: dep ensure -v
+      - run: 
+          name: Unit test
+          command: go test -v ./cmd/... ./pkg/...
+      - run: 
+          name: Build container 
+          command: make build-container
+      - run: 
+          name: Docker push 
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS && make push
       - run:
-          name: make release
+          name: Release container and binary
           command: | 
             if [[ -n "$CIRCLE_TAG" ]]
             then
-              TAG=$CIRCLE_TAG make release
-              #ghr -draft -u "$CIRCLE_PROJECT_USERNAME" "${CIRCLE_TAG}" release/
+              VERSION=$CIRCLE_TAG make tag-and-push
+              GOOS=darwin GOARCH=amd64 go build -o bin/gofer-darwin-amd64 main.go
+              GOOS=linux GOARCH=amd64 go build -o bin/gofer-linux-amd64 main.go
+              ghr -draft -u "$CIRCLE_PROJECT_USERNAME" "$CIRCLE_TAG" bin/
             fi
 
 deployment:
