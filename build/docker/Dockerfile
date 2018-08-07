@@ -1,4 +1,4 @@
-FROM dkoshkin/golang-dev:1.10.3-alpine
+FROM golang:1.10.3-alpine
 WORKDIR /go/src/github.com/dkoshkin/gofer
 COPY . /go/src/github.com/dkoshkin/gofer
 RUN CGO_ENABLED=0 GOOS=linux go build -o bin/gofer main.go

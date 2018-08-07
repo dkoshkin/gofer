@@ -12,7 +12,7 @@ CONTAINER = dkoshkin/gofer
 PKG = github.com/dkoshkin/gofer
 
 build-container:
-	docker build -t $(CONTAINER) .
+	docker build -f build/docker/Dockerfile -t $(CONTAINER) .
 
 build-binaries:
 	@$(MAKE) TARGET_GOOS=darwin TARGE_GOARCH=amd64 build-binary

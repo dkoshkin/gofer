@@ -94,7 +94,7 @@ dependecies:
 ```
 
 ### Example
-A more complete `config.yaml` example available [here](https://raw.githubusercontent.com/dkoshkin/gofer/master/config.yaml.sample).
+A more complete `config.yaml` example available [here](https://raw.githubusercontent.com/dkoshkin/gofer/master/examples/config.yaml).
 
 ## Development
 
