@@ -1,7 +1,7 @@
 FROM golang:1.10.3-alpine
 WORKDIR /go/src/github.com/dkoshkin/gofer
 COPY . /go/src/github.com/dkoshkin/gofer
-RUN CGO_ENABLED=0 GOOS=linux go build -o bin/gofer main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o bin/gofer cmd/cli/main.go
 
 FROM alpine:latest  
 RUN apk --no-cache add ca-certificates openssl

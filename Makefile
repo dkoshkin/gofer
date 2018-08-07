@@ -31,7 +31,7 @@ build-binary:
 		make build-binary-local
 
 build-binary-local:
-	go build -o bin/gofer-$(TARGET_GOOS)-$(TARGE_GOARCH) main.go
+	go build -o bin/gofer-$(TARGET_GOOS)-$(TARGE_GOARCH) cmd/cli/main.go
 
 build-all: build-container build-binaries
 

@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/dkoshkin/gofer/cmd"
+import "github.com/dkoshkin/gofer/cmd/cli/cmd"
 
 func main() {
 	cmd.Execute()
