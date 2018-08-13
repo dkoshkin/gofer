@@ -3,9 +3,9 @@
 A CLI utility to help you keep your project's ever-changing dependency versions up to date.
 
 ## The Name
-According to the [dictionary](https://www.merriam-webster.com/dictionary/gofer): *gofer* - an employee whose duties include running errands 
+According to the dictionary: [gofer](https://www.merriam-webster.com/dictionary/gofer) - an employee whose duties include running errands 
 
-The tool is also written in Go, a language with a recognizable *gofer* [mascot](https://blog.golang.org/gopher)
+The tool is also written in Go, a language with a recognizable [gopher mascot](https://blog.golang.org/gopher)
 
 ## Motivation
 
@@ -95,6 +95,16 @@ dependecies:
 
 ### Example
 A more complete `config.yaml` example available [here](https://raw.githubusercontent.com/dkoshkin/gofer/master/examples/config.yaml).
+
+## Supported Dependencies
+
+* docker - depending on the implementation of the registry the mechanism to provide the credentials will be different
+  * [dockerhub](https://hub.docker.com/)
+  * gcr.io
+  * quay.io
+  * private registry - (in progress)
+* [github](https://github.com/) - (in progress)
+* *manual* - the `dig` command will skip this dependency when fetching latest version
 
 ## Development
 
