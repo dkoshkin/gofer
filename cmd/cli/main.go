@@ -16,6 +16,12 @@ package main
 
 import "github.com/dkoshkin/gofer/cmd/cli/cmd"
 
+// Set via linker flag
+var (
+	version   string
+	buildDate string
+)
+
 func main() {
-	cmd.Execute()
+	cmd.Execute(cmd.Version{Version: version, BuildDate: buildDate})
 }

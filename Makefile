@@ -1,18 +1,24 @@
 ifeq ($(origin VERSION), undefined)
     VERSION := $(shell git describe --tags --always)
 endif
+ifeq ($(origin BUILD_DATE), undefined)
+    BUILD_DATE := $(shell date -u)
+endif
 ifeq ($(origin TARGET_GOOS), undefined)
     TARGET_GOOS := $(shell go env GOOS)
 endif
 ifeq ($(origin TARGE_GOARCH), undefined)
-	TARGE_GOARCH := $(shell go env GOARCH)
+    TARGE_GOARCH := $(shell go env GOARCH)
 endif
 
 CONTAINER = dkoshkin/gofer
 PKG = github.com/dkoshkin/gofer
 
 build-container:
-	docker build -f build/docker/Dockerfile -t $(CONTAINER) .
+	docker build                                \
+	    --build-arg VERSION="$(VERSION)"        \
+		--build-arg BUILD_DATE="$(BUILD_DATE)"  \
+		-f build/docker/Dockerfile -t $(CONTAINER) .
 
 build-binaries:
 	@$(MAKE) TARGET_GOOS=darwin TARGE_GOARCH=amd64 build-binary
@@ -24,14 +30,18 @@ build-binary:
 		-u root:root                        \
 		-v "$(shell pwd)":/go/src/$(PKG)    \
 		-w /go/src/$(PKG)                   \
-		-e CGO_ENABLED=0					\
-		-e GOOS=$(TARGET_GOOS)				\
-		-e GOARCH=$(TARGE_GOARCH)			\
+		-e CGO_ENABLED=0                    \
+		-e GOOS=$(TARGET_GOOS)              \
+		-e GOARCH=$(TARGE_GOARCH)           \
+		-e VERSION=$(VERSION)               \
+		-e BUILD_DATE=$(BUILD_DATE)         \
 		dkoshkin/golang-dev:1.10.3-alpine   \
 		make build-binary-local
 
 build-binary-local:
-	go build -o bin/gofer-$(TARGET_GOOS)-$(TARGE_GOARCH) cmd/cli/main.go
+	go build \
+		-ldflags "-X main.version=$(VERSION) -X 'main.buildDate=$(BUILD_DATE)'" \
+		-o bin/gofer-$(TARGET_GOOS)-$(TARGE_GOARCH) cmd/cli/main.go
 
 build-all: build-container build-binaries
 
@@ -64,6 +74,8 @@ vendor-local:
 push:
 	docker push $(CONTAINER):latest
 
-tag-and-push:
+tag:
 	docker tag $(CONTAINER) $(CONTAINER):$(VERSION)
+
+tag-and-push: tag
 	docker push $(CONTAINER):$(VERSION)

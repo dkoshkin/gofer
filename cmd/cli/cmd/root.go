@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -23,7 +24,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-const apiVersion = "v0.1"
+const (
+	apiVersion = "v0.1"
+)
+
+type Version struct {
+	Version   string `json:"Version"`
+	BuildDate string `json:"BuildDate"`
+}
 
 var cfgFile string
 var out = os.Stdout
@@ -40,7 +48,12 @@ var rootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(version Version) {
+	// set version string
+	bytes, _ := json.MarshalIndent(version, "", "    ")
+	rootCmd.SetVersionTemplate(string(bytes) + "\n")
+	// also need to set Version to get cobra to print it
+	rootCmd.Version = version.Version
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
