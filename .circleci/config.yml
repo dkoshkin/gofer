@@ -33,8 +33,8 @@ jobs:
             if [[ -n "$CIRCLE_TAG" ]]
             then
               VERSION=$CIRCLE_TAG make tag-and-push
-              TARGET_GOOS=darwin TARGE_GOARCH=amd64 make build-binary-local
-              TARGET_GOOS=linux TARGE_GOARCH=amd64 make build-binary-local
+              GOOS=darwin GOARCH=amd64 make build-binary-local
+              GOOS=linux GOARCH=amd64 make build-binary-local
               ghr -draft -u "$CIRCLE_PROJECT_USERNAME" "$CIRCLE_TAG" bin/
             fi
 
