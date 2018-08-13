@@ -49,7 +49,7 @@ Will result in `./gofer/config.yaml`:
 
 ```
 apiversion: v0.1
-dependecies: []
+dependencies: []
 ```
 
 2) Add a new docker dependency with an optional `--mask` (a regular expression) and `--type`.   
@@ -64,7 +64,7 @@ Will result in `./gofer/config.yaml`:
 
 ```
 apiversion: v0.1
-dependecies:
+dependencies:
 - name: busybox
   type: docker
   version: 1.28.1
@@ -85,7 +85,7 @@ Will result in `./gofer/config.yaml`:
 
 ```
 apiversion: v0.1
-dependecies:
+dependencies:
 - name: busybox
   type: docker
   version: 1.28.1

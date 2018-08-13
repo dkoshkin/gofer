@@ -24,8 +24,8 @@ func TestInit(t *testing.T) {
 	if manifest.APIVersion != version {
 		t.Fatalf("expected version %q, instead got %v", version, manifest.APIVersion)
 	}
-	if len(manifest.Dependecies) != 0 {
-		t.Fatalf("expected dependency length to be 0, instead got %d", len(manifest.Dependecies))
+	if len(manifest.Dependencies) != 0 {
+		t.Fatalf("expected dependency length to be 0, instead got %d", len(manifest.Dependencies))
 	}
 }
 
@@ -39,8 +39,8 @@ func TestInitDirectoryExists(t *testing.T) {
 	if manifest.APIVersion != version {
 		t.Fatalf("expected version %q, instead got %v", version, manifest.APIVersion)
 	}
-	if len(manifest.Dependecies) != 0 {
-		t.Fatalf("expected dependency length to be 0, instead got %d", len(manifest.Dependecies))
+	if len(manifest.Dependencies) != 0 {
+		t.Fatalf("expected dependency length to be 0, instead got %d", len(manifest.Dependencies))
 	}
 }
 func TestInitFileExists(t *testing.T) {

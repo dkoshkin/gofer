@@ -39,7 +39,7 @@ var digCmd = &cobra.Command{
 
 		updatedManifest := &dependency.Manifest{APIVersion: manifest.APIVersion}
 		dc := docker.New()
-		for _, dep := range manifest.Dependecies {
+		for _, dep := range manifest.Dependencies {
 			depType := dep.GetType()
 			switch depType {
 			case dependency.DockerType:
@@ -60,7 +60,7 @@ var digCmd = &cobra.Command{
 				dep.Notes = fmt.Sprintf("unhandled type %q", depType)
 			}
 			dep.Type = depType
-			updatedManifest.Dependecies = append(updatedManifest.Dependecies, dep)
+			updatedManifest.Dependencies = append(updatedManifest.Dependencies, dep)
 		}
 		writeManifest(updatedManifest, output, false, []string{})
 

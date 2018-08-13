@@ -25,14 +25,14 @@ func (mf ManifestWriter) WriteTable(m Manifest) {
 	fmt.Fprintln(mf.Writer)
 	fmt.Fprintln(tw, "Name\tCurrent Version\tLatest Version\tType\tMask\tNotes")
 	fmt.Fprintln(tw, "------\t------\t------\t------\t------\t------")
-	for _, dep := range filteredDependencies(m.Dependecies, mf.FilterOptions) {
+	for _, dep := range filteredDependencies(m.Dependencies, mf.FilterOptions) {
 		fmt.Fprintf(tw, "%s\t%s\t%s\t%s\t%s\t%s\t\n", dep.Name, dep.Version, dep.LatestVersion, dep.GetType(), dep.Mask, dep.Notes)
 	}
 	tw.Flush()
 }
 
 func (mf ManifestWriter) WriteYAML(m Manifest) error {
-	m.Dependecies = filteredDependencies(m.Dependecies, mf.FilterOptions)
+	m.Dependencies = filteredDependencies(m.Dependencies, mf.FilterOptions)
 	b, err := yaml.Marshal(m)
 	if err != nil {
 		return fmt.Errorf("could not marshal to YAML: %v", err)
@@ -45,7 +45,7 @@ func (mf ManifestWriter) WriteYAML(m Manifest) error {
 }
 
 func (mf ManifestWriter) WriteJSON(m Manifest) error {
-	m.Dependecies = filteredDependencies(m.Dependecies, mf.FilterOptions)
+	m.Dependencies = filteredDependencies(m.Dependencies, mf.FilterOptions)
 	b, err := json.MarshalIndent(m, "", "    ")
 	if err != nil {
 		return fmt.Errorf("could not marshal to JSON: %v", err)

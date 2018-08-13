@@ -288,7 +288,7 @@ func TestFilteredDependencies(t *testing.T) {
 
 var manifest = Manifest{
 	APIVersion: "v1.0",
-	Dependecies: []Spec{
+	Dependencies: []Spec{
 		{
 			Name:          "alpine",
 			Type:          "docker",
@@ -373,7 +373,7 @@ func TestWriteTable(t *testing.T) {
 }
 
 var yamlText = `apiversion: v1.0
-dependecies:
+dependencies:
 - name: alpine
   type: docker
   version: "3.6"
@@ -422,7 +422,7 @@ func TestWriteYaml(t *testing.T) {
 
 var jsonText = `{
     "apiVersion": "v1.0",
-    "dependecies": [
+    "dependencies": [
         {
             "name": "alpine",
             "type": "docker",
