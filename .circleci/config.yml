@@ -8,7 +8,7 @@ jobs:
   build:
     docker:
       # specify the version
-      - image: dkoshkin/golang-ci:1.10.3-stretch-1
+      - image: dkoshkin/golang-ci:1.10.3-stretch-1.0.0
     working_directory: /go/src/github.com/dkoshkin/gofer
     steps:
       - checkout
