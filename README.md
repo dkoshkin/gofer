@@ -23,7 +23,7 @@ As the project grew the process of checking for new docker image versions and Gi
 echo 'docker run                                    \
   -v $(pwd):/gofer                                  \
   -e GOOGLE_ACCESS_TOKEN=$GOOGLE_ACCESS_TOKEN       \
-  dkoshkin/gofer:v0.1.0 $@ ' > /usr/local/bin/gofer \
+  dkoshkin/gofer:stable $@ ' > /usr/local/bin/gofer \
 && chmod +x /usr/local/bin/gofer
 ```
 
@@ -32,9 +32,9 @@ echo 'docker run                                    \
 * a Linux or macOS
 ```
 # for Linux
-wget https://github.com/dkoshkin/gofer/releases/download/v0.1.0/gofer-linux-amd64 -O /usr/local/bin/gofer
+wget https://github.com/dkoshkin/gofer/releases/download/$VERSION/gofer-linux-amd64 -O /usr/local/bin/gofer
 # for macOS
-wget https://github.com/dkoshkin/gofer/releases/download/v0.1.0/gofer-darwin-amd64 -O /usr/local/bin/gofer
+wget https://github.com/dkoshkin/gofer/releases/download/$VERSION/gofer-darwin-amd64 -O /usr/local/bin/gofer
 ```
 
 ## Usage
