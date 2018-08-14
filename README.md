@@ -39,13 +39,13 @@ wget https://github.com/dkoshkin/gofer/releases/download/$VERSION/gofer-darwin-a
 
 ## Usage
 
-1) Initialize an empty config file in `./gofer/config.yaml`
+1) Initialize an empty config file in `./.gofer/config.yaml`
 
 ```
 gofer init -f ./.gofer/config.yaml
 ```
 
-Will result in `./gofer/config.yaml`:
+Will result in `./.gofer/config.yaml`:
 
 ```
 apiversion: v0.1
@@ -60,7 +60,7 @@ The `--type` will be inferred from the `name` but can be set explicitly or set t
 gofer add busybox 1.28.1 --mask "1.28.[0-9]+" --type docker
 ```
 
-Will result in `./gofer/config.yaml`:
+Will result in `./.gofer/config.yaml`:
 
 ```
 apiversion: v0.1
@@ -81,7 +81,7 @@ export GOOGLE_ACCESS_TOKEN=`gcloud auth print-access-token`
 gofer dig
 ```
 
-Will result in `./gofer/config.yaml`:
+Will result in `./.gofer/config.yaml`:
 
 ```
 apiversion: v0.1
