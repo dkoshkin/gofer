@@ -53,7 +53,6 @@ var digCmd = &cobra.Command{
 				}
 				dep.LatestVersion = latest
 			case dependency.ManualType:
-				continue
 			case dependency.UnknownType:
 				dep.Notes = fmt.Sprintf("could not determine type")
 			default:
