@@ -109,7 +109,7 @@ func (m FileManager) Write(manifest dependency.Manifest) error {
 		return err
 	}
 
-	file, err := os.OpenFile(m.filePath, os.O_RDWR, 0644)
+	file, err := os.OpenFile(m.filePath, os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		return fmt.Errorf("could not open manifest file %v", err)
 	}
