@@ -48,3 +48,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/novln/docker-parser"
+
+[[constraint]]
+  name = "github.com/google/go-github"
+  version = "17.0.0"

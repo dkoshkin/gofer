@@ -52,12 +52,17 @@ apiversion: v0.1
 dependencies: []
 ```
 
-2) Add a new docker dependency with an optional `--mask` (a regular expression) and `--type`.   
+---
+
+2) Add some dependencies with an optional `--mask` (a regular expression) and `--type`.   
 The `--type` will be inferred from the `name` but can be set explicitly or set to `manual` to for unsupported dependencies.  
 *Note* when set to `manual` the `dig` command will skip the dependency when fetching latest version.
 
 ```
 gofer add busybox 1.28.1 --mask "1.28.[0-9]+" --type docker
+```
+```
+gofer add "https://github.com/kubernetes/kubernetes" v1.9.6 --mask "v1.9.[0-9]+" --type github
 ```
 
 Will result in `./.gofer/config.yaml`:
@@ -69,12 +74,22 @@ dependencies:
   type: docker
   version: 1.28.1
   mask: 1.28.[0-9]+
+- name: https://github.com/kubernetes/kubernetes
+  type: github
+  version: v1.9.6
+  mask: v1.9.[0-9]+
 ```
 
 **IMPORTANT when fetching versions for gcr.io docker images set:** 
 ```
 export GOOGLE_ACCESS_TOKEN=`gcloud auth print-access-token`
 ```
+**IMPORTANT when fetching versions for private `github` repos or when the unauthenticated rate limit of 60/hour is not sufficient set a [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/):** 
+```
+export GITHUB_ACCESS_TOKEN=$SOME_TOKEN
+```
+
+---
 
 3) Fetch the latest versions of all dependencies
 ```
@@ -91,6 +106,11 @@ dependencies:
   version: 1.28.1
   latestVersion: 1.28.4
   mask: 1.28.[0-9]+
+- name: https://github.com/kubernetes/kubernetes
+  type: github
+  version: v1.9.6
+  latestVersion: v1.9.10
+  mask: v1.9.[0-9]+
 ```
 
 ### Example
@@ -103,7 +123,7 @@ A more complete `config.yaml` example available [here](https://raw.githubusercon
   * gcr.io
   * quay.io
   * private registry - (in progress)
-* [github](https://github.com/) - (in progress)
+* [github](https://github.com/)
 * *manual* - the `dig` command will skip this dependency when fetching latest version
 
 ## Development

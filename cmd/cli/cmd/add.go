@@ -25,6 +25,8 @@ import (
 var mask string
 var sourceType string
 
+var validTypes = []string{"github", "docker", "manual"}
+
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add name version",
@@ -43,7 +45,12 @@ var addCmd = &cobra.Command{
 			Version: args[1],
 			Mask:    mask,
 		}
-		if sourceType == "" {
+		if sourceType != "" {
+			if !stringInSlice(sourceType, validTypes) {
+				return fmt.Errorf("dependency not added, %q is not a valid type", sourceType)
+			}
+			dep.Type = sourceType
+		} else {
 			dep.Type = dependency.DetermineType(args[1])
 		}
 		if dep.Type == dependency.UnknownType {
@@ -76,4 +83,13 @@ func init() {
 	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	addCmd.Flags().StringVar(&mask, "mask", "", "a regex to match 'version', leave blank to match any version")
 	addCmd.Flags().StringVar(&sourceType, "type", "", "source type, leave empty to autodetect (options \"github\"|\"docker\"|\"manual\")")
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }

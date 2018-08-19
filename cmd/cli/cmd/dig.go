@@ -19,6 +19,7 @@ import (
 
 	"github.com/dkoshkin/gofer/pkg/dependency"
 	"github.com/dkoshkin/gofer/pkg/dependency/docker"
+	"github.com/dkoshkin/gofer/pkg/dependency/github"
 	"github.com/dkoshkin/gofer/pkg/dependency/manager"
 	"github.com/spf13/cobra"
 )
@@ -39,19 +40,32 @@ var digCmd = &cobra.Command{
 
 		updatedManifest := &dependency.Manifest{APIVersion: manifest.APIVersion}
 		dc := docker.New()
+		gc := github.New()
 		for _, dep := range manifest.Dependencies {
 			depType := dep.GetType()
 			switch depType {
 			case dependency.DockerType:
 				latest, err := dc.LatestVersion(dep.Name, dep.Mask)
 				if err != nil {
-					if err == docker.NoTags {
+					if err == dependency.ErrEmptyVerionsList {
 						dep.Notes = fmt.Sprintf("could not find latest tag")
 					} else {
 						dep.Notes = fmt.Sprintf("error retrieving latest tag: %v", err)
 					}
 				}
 				dep.LatestVersion = latest
+				dep.Notes = ""
+			case dependency.GithubType:
+				latest, err := gc.LatestVersion(dep.Name, dep.Mask)
+				if err != nil {
+					if err == dependency.ErrEmptyVerionsList {
+						dep.Notes = fmt.Sprintf("could not find latest tag")
+					} else {
+						dep.Notes = fmt.Sprintf("error retrieving latest tag: %v", err)
+					}
+				}
+				dep.LatestVersion = latest
+				dep.Notes = ""
 			case dependency.ManualType:
 			case dependency.UnknownType:
 				dep.Notes = fmt.Sprintf("could not determine type")

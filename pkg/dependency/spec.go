@@ -3,11 +3,13 @@ package dependency
 import "strings"
 
 const (
-	UnknownType      = "unknown"
-	ManualType       = "manual"
-	DockerType       = "docker"
-	GithubType       = "github"
-	githubTypePrefix = "https://github.com/"
+	UnknownType = "unknown"
+	ManualType  = "manual"
+	DockerType  = "docker"
+	GithubType  = "github"
+
+	githubTypePrefix      = "https://github.com/"
+	githubTypePrefixShort = "github.com/"
 )
 
 // Spec describes a resource
@@ -37,7 +39,7 @@ func DetermineType(source string) string {
 		return ManualType
 	}
 	specType := UnknownType
-	if strings.HasPrefix(source, githubTypePrefix) {
+	if strings.HasPrefix(source, githubTypePrefix) || strings.HasPrefix(source, githubTypePrefixShort) {
 		specType = GithubType
 	} else {
 		specType = DockerType
