@@ -1,16 +1,29 @@
-FROM golang:1.10.3-alpine
+FROM golang:1.11.3 as builder_base
+WORKDIR /src/github.com/dkoshkin/gofer
+
+# We want to populate the module cache based on the go.{mod,sum} files.
+COPY go.mod .
+COPY go.sum .
+
+#This is the ‘magic’ step that will download all the dependencies that are specified in
+# the go.mod and go.sum file.
+# Because of how the layer caching system works in Docker, the  go mod download
+# command will _ only_ be re-run when the go.mod or go.sum file change
+# (or when we add another docker instruction this line)
+RUN go mod download
+
+# Build with cached dependencies
+FROM builder_base as builder
 ARG VERSION
 ARG BUILD_DATE
-WORKDIR /go/src/github.com/dkoshkin/gofer
-COPY . /go/src/github.com/dkoshkin/gofer
-RUN echo $VERSION
-RUN CGO_ENABLED=0 GOOS=linux go build \
-        -ldflags "-X main.version=$VERSION -X 'main.buildDate=$BUILD_DATE'" \
-        -o bin/gofer cmd/cli/main.go
+ENV CGO_ENABLED=0
+WORKDIR /src/github.com/dkoshkin/gofer
+COPY . .
+RUN make build-binary-local
 
-FROM alpine:latest  
-RUN apk --no-cache add ca-certificates openssl
+FROM alpine:latest
 WORKDIR /gofer
-COPY --from=0 /go/src/github.com/dkoshkin/gofer/bin/gofer /usr/local/bin
+RUN apk --no-cache add ca-certificates openssl
+COPY --from=builder /src/github.com/dkoshkin/gofer/bin/gofer-linux-amd64 /usr/local/bin/gofer
 ENTRYPOINT [ "/usr/local/bin/gofer" ]
 CMD ["--help"]

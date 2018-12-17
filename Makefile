@@ -14,35 +14,46 @@ endif
 CONTAINER = dkoshkin/gofer
 PKG = github.com/dkoshkin/gofer
 
+.PHONY: build-container
 build-container:
 	docker build                                \
 	    --build-arg VERSION="$(VERSION)"        \
 		--build-arg BUILD_DATE="$(BUILD_DATE)"  \
 		-f build/docker/Dockerfile -t $(CONTAINER) .
 
+.PHONY: builder
+builder:
+	docker build                                \
+	    --target builder_base                   \
+	    -f build/docker/Dockerfile -t gofer-base .
+
+.PHONY: build-binaries
 build-binaries:
 	@$(MAKE) GOOS=darwin GOARCH=amd64 build-binary
 	@$(MAKE) GOOS=linux GOARCH=amd64 build-binary
 
+.PHONY: build-binary
 build-binary:
 	@docker run                             \
 		--rm                                \
 		-u root:root                        \
-		-v "$(shell pwd)":/go/src/$(PKG)    \
-		-w /go/src/$(PKG)                   \
+		-v "$(shell pwd)":/src/$(PKG)       \
+		-w /src/$(PKG)                      \
 		-e CGO_ENABLED=0                    \
 		-e GOOS=$(GOOS)                     \
 		-e GOARCH=$(GOARCH)                 \
 		-e VERSION=$(VERSION)               \
-		-e BUILD_DATE=$(BUILD_DATE)         \
-		dkoshkin/golang-dev:1.10.3-alpine   \
+		-e BUILD_DATE="$(BUILD_DATE)"       \
+		gofer-base                          \
 		make build-binary-local
 
+.PHONY: build-binary-local
 build-binary-local:
 	go build \
 		-ldflags "-X main.version=$(VERSION) -X 'main.buildDate=$(BUILD_DATE)'" \
 		-o bin/gofer-$(GOOS)-$(GOARCH) cmd/cli/main.go
 
+.PHONY: build-all
 build-all: build-container build-binaries
 
 .PHONY: test
@@ -50,32 +61,23 @@ test:
 	@docker run                             \
 		--rm                                \
 		-u root:root                        \
-		-v "$(shell pwd)":/go/src/$(PKG)    \
-		-w /go/src/$(PKG)                   \
-		dkoshkin/golang-dev:1.10.3-alpine   \
+		-v "$(shell pwd)":/src/$(PKG)       \
+		-w /src/$(PKG)                      \
+		gofer-base                          \
 		make test-local
 
-test-local: 
+.PHONY: test-local
+test-local:
 	go test -v ./cmd/... ./pkg/...
 
-.PHONY: vendor
-vendor:
-	@docker run                             \
-		--rm                                \
-		-it                                 \
-		-v "$(shell pwd)":/go/src/$(PKG)    \
-		-w /go/src/$(PKG)                   \
-		dkoshkin/dep-dev:v0.5.0-1.10.3-alpine   \
-		make vendor-local
-
-vendor-local:
-	dep ensure -v
-
+.PHONY: push
 push:
 	docker push $(CONTAINER):latest
 
+.PHONY: tag
 tag:
 	docker tag $(CONTAINER) $(CONTAINER):$(VERSION)
 
+.PHONY: tag-and-push
 tag-and-push: tag
 	docker push $(CONTAINER):$(VERSION)

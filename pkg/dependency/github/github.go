@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/dkoshkin/gofer/pkg/dependency"
-	gh "github.com/google/go-github/github"
+	gh "github.com/google/go-github/v20/github"
 	"golang.org/x/oauth2"
 )
 

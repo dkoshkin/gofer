@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"sort"
 
-	gh "github.com/google/go-github/github"
+	gh "github.com/google/go-github/v20/github"
 	version "github.com/mcuadros/go-version"
 )
 

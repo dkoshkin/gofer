@@ -129,7 +129,6 @@ A more complete `config.yaml` example available [here](https://raw.githubusercon
 ## Development
 
 ```
-make vendor
 make test
 # build a docker container
 make build-container
