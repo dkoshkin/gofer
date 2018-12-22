@@ -1,4 +1,4 @@
-FROM golang:1.11.3 as builder_base
+FROM golang:1.14.3 as builder_base
 WORKDIR /src/github.com/dkoshkin/gofer
 
 # We want to populate the module cache based on the go.{mod,sum} files.

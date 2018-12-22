@@ -41,8 +41,7 @@ func New() *Registry {
 }
 
 // Tags return all tags for an image
-func (r Registry) Tags(image, mask string) (*Tags, error) {
-	var tags *Tags
+func (r Registry) Tags(image string) ([]string, error) {
 	parsed, err := parser.Parse(image)
 	if err != nil {
 		return nil, fmt.Errorf("could not parse image %q: %v", image, err)
@@ -63,32 +62,11 @@ func (r Registry) Tags(image, mask string) (*Tags, error) {
 		return nil, fmt.Errorf("unsupported registry %q", regsitry)
 	}
 
-	tags, err = getTags(parsed.ShortName(), client)
-	if err != nil {
-		return nil, err
-	}
-
-	return filterTags(tags, mask), nil
+	return getTags(parsed.ShortName(), client)
 }
 
-func filterTags(tags *Tags, mask string) *Tags {
-	// if not mask just return all tags
-	if mask == "" {
-		return tags
-	}
-	// with mask filter out tags
-	rgxMask := regexp.MustCompile(fmt.Sprintf("^%s$", mask))
-	filteredTags := &Tags{}
-	for _, tag := range tags.List {
-		if rgxMask.MatchString(tag) {
-			filteredTags.List = append(filteredTags.List, tag)
-		}
-	}
-	return filteredTags
-}
-
-func getTags(image string, client Client) (*Tags, error) {
-	tags := &Tags{}
+func getTags(image string, client Client) ([]string, error) {
+	tags := []string{}
 	var paginationParam string
 	// use a loop incase results are paginated
 	for {
@@ -121,7 +99,7 @@ func getTags(image string, client Client) (*Tags, error) {
 			return nil, fmt.Errorf("could not unmarshal tags response: %v", err)
 		}
 
-		tags.List = append(tags.List, unmarshaledTagsResp.Tags...)
+		tags = append(tags, unmarshaledTagsResp.Tags...)
 		// pagination header will be empty when on the last page
 		paginationHeader := resp.Header.Get(paginationHeader)
 		if paginationHeader == "" {

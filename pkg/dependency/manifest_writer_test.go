@@ -348,17 +348,17 @@ var manifest = Manifest{
 	},
 }
 
-var tableText = `Version: "v1.0"
+var tableText = `String: "v1.0"
 
-Name                                         Current Version     Latest Version     Type       Mask             Notes
-------                                       ------              ------             ------     ------           ------
-alpine                                       3.6                 3.8                docker                                                    
-google/cadvisor                              v0.28.1             v0.30.2            docker                                                    
-google/cadvisor                              v0.29.2             v0.29.2            docker     v0.29.[0-9]+                                   
-cadvisor                                     v0.28.1                                docker     v0.29.[0-9]+     could not find latest tag     
-gcr.io/google-containers/kube-apiserver      v1.9.6              v1.9.9             docker     v1.9.[0-9]+                                    
-quay.io/coreos/etcd                          v3.1.13             v3.1.18            docker     v3.1.[0-9]+                                    
-https://github.com/kubernetes/kubernetes     v1.9.6                                 github     v1.9.[0-9]+      unhandled type "github"       
+Name                                         Current String     Latest String     Type       Mask             Notes
+------                                       ------             ------            ------     ------           ------
+alpine                                       3.6                3.8               docker                                                    
+google/cadvisor                              v0.28.1            v0.30.2           docker                                                    
+google/cadvisor                              v0.29.2            v0.29.2           docker     v0.29.[0-9]+                                   
+cadvisor                                     v0.28.1                              docker     v0.29.[0-9]+     could not find latest tag     
+gcr.io/google-containers/kube-apiserver      v1.9.6             v1.9.9            docker     v1.9.[0-9]+                                    
+quay.io/coreos/etcd                          v3.1.13            v3.1.18           docker     v3.1.[0-9]+                                    
+https://github.com/kubernetes/kubernetes     v1.9.6                               github     v1.9.[0-9]+      unhandled type "github"       
 `
 
 func TestWriteTable(t *testing.T) {
@@ -367,46 +367,46 @@ func TestWriteTable(t *testing.T) {
 	mw.WriteTable(manifest)
 	if b.String() != tableText {
 		t.Log(b.String())
-		t.Log(jsonText)
+		t.Log(tableText)
 		t.Error("text written to table output does not equal expected")
 	}
 }
 
 var yamlText = `apiversion: v1.0
 dependencies:
-- name: alpine
-  type: docker
-  version: "3.6"
-  latestVersion: "3.8"
-- name: google/cadvisor
-  type: docker
-  version: v0.28.1
-  latestVersion: v0.30.2
-- name: google/cadvisor
-  type: docker
-  version: v0.29.2
-  latestVersion: v0.29.2
-  mask: v0.29.[0-9]+
-- name: cadvisor
-  type: docker
-  version: v0.28.1
-  mask: v0.29.[0-9]+
-  notes: could not find latest tag
-- name: gcr.io/google-containers/kube-apiserver
-  type: docker
-  version: v1.9.6
-  latestVersion: v1.9.9
-  mask: v1.9.[0-9]+
-- name: quay.io/coreos/etcd
-  type: docker
-  version: v3.1.13
-  latestVersion: v3.1.18
-  mask: v3.1.[0-9]+
-- name: https://github.com/kubernetes/kubernetes
-  type: github
-  version: v1.9.6
-  mask: v1.9.[0-9]+
-  notes: unhandled type "github"
+  - name: alpine
+    type: docker
+    version: "3.6"
+    latestVersion: "3.8"
+  - name: google/cadvisor
+    type: docker
+    version: v0.28.1
+    latestVersion: v0.30.2
+  - name: google/cadvisor
+    type: docker
+    version: v0.29.2
+    latestVersion: v0.29.2
+    mask: v0.29.[0-9]+
+  - name: cadvisor
+    type: docker
+    version: v0.28.1
+    mask: v0.29.[0-9]+
+    notes: could not find latest tag
+  - name: gcr.io/google-containers/kube-apiserver
+    type: docker
+    version: v1.9.6
+    latestVersion: v1.9.9
+    mask: v1.9.[0-9]+
+  - name: quay.io/coreos/etcd
+    type: docker
+    version: v3.1.13
+    latestVersion: v3.1.18
+    mask: v3.1.[0-9]+
+  - name: https://github.com/kubernetes/kubernetes
+    type: github
+    version: v1.9.6
+    mask: v1.9.[0-9]+
+    notes: unhandled type "github"
 `
 
 func TestWriteYaml(t *testing.T) {

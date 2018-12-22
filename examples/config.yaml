@@ -16,16 +16,16 @@ dependencies:
   mask: v0.29.[0-9]+
 - name: gcr.io/google-containers/kube-apiserver
   type: docker
-  version: v1.9.6
-  mask: v1.9.[0-9]+
+  version: v1.17.5
+  mask: v1.17.[0-9]+
 - name: quay.io/coreos/etcd
   type: docker
   version: v3.1.13
   mask: v3.1.[0-9]+
 - name: https://github.com/kubernetes/kubernetes
   type: github
-  version: v1.9.6
-  mask: v1.9.[0-9]+
+  version: v1.17.5
+  mask: v1.17.[0-9]+
 - name: rails
   type: manual
   version: 5.2.1

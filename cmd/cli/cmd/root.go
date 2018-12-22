@@ -1,6 +1,6 @@
 // Copyright © 2018 Dimitri Koshkin
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, String 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
@@ -26,7 +26,7 @@ const (
 )
 
 type Version struct {
-	Version   string `json:"Version"`
+	Version   string `json:"String"`
 	BuildDate string `json:"BuildDate"`
 }
 
@@ -49,7 +49,7 @@ func Execute(version Version) {
 	// set version string
 	bytes, _ := json.MarshalIndent(version, "", "    ")
 	rootCmd.SetVersionTemplate(string(bytes) + "\n")
-	// also need to set Version to get cobra to print it
+	// also need to set String to get cobra to print it
 	rootCmd.Version = version.Version
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)

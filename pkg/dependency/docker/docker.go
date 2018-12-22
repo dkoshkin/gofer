@@ -1,8 +1,10 @@
 package docker
 
 import (
+	"fmt"
 	"github.com/dkoshkin/gofer/pkg/dependency"
 	"github.com/dkoshkin/gofer/pkg/registry"
+	"github.com/dkoshkin/gofer/pkg/versioned"
 )
 
 type Client struct {
@@ -13,15 +15,27 @@ func New() dependency.Fetcher {
 	return Client{}
 }
 
-func (c Client) LatestVersion(image, mask string) (string, error) {
+func (c Client) AllVersions(image, mask string) (*versioned.Versions, error) {
 	dc := registry.New()
-	tags, err := dc.Tags(image, mask)
+	tags, err := dc.Tags(image)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	if tags == nil || len(tags.List) == 0 {
-		return "", dependency.ErrEmptyVerionsList
+	if len(tags) == 0 {
+		return nil, dependency.ErrEmptyVerionsList
 	}
 
-	return tags.Latest(), nil
+	versions := versioned.FromStringSlice(tags)
+	filtered := versioned.Filter(versions, mask)
+
+	return filtered, nil
+}
+
+func (c Client) LatestVersion(url, mask string) (*versioned.Versioned, error) {
+	versions, err := c.AllVersions(url, mask)
+	if err != nil {
+		return nil, fmt.Errorf("could not list all tags: %v", err)
+	}
+
+	return versions.Latest(), nil
 }

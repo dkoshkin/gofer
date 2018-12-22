@@ -17,7 +17,7 @@ PKG = github.com/dkoshkin/gofer
 .PHONY: build-container
 build-container:
 	docker build                                \
-	    --build-arg VERSION="$(VERSION)"        \
+		--build-arg VERSION="$(VERSION)"        \
 		--build-arg BUILD_DATE="$(BUILD_DATE)"  \
 		-f build/docker/Dockerfile -t $(CONTAINER) .
 

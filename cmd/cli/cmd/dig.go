@@ -1,6 +1,6 @@
 // Copyright © 2018 Dimitri Koshkin
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, String 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
@@ -53,7 +53,7 @@ var digCmd = &cobra.Command{
 						dep.Notes = fmt.Sprintf("error retrieving latest tag: %v", err)
 					}
 				}
-				dep.LatestVersion = latest
+				dep.LatestVersion = latest.String()
 				dep.Notes = ""
 			case dependency.GithubType:
 				latest, err := gc.LatestVersion(dep.Name, dep.Mask)
@@ -64,7 +64,7 @@ var digCmd = &cobra.Command{
 						dep.Notes = fmt.Sprintf("error retrieving latest tag: %v", err)
 					}
 				}
-				dep.LatestVersion = latest
+				dep.LatestVersion = latest.String()
 				dep.Notes = ""
 			case dependency.ManualType:
 			case dependency.UnknownType:

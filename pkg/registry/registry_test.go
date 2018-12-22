@@ -1,7 +1,6 @@
 package registry
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -15,39 +14,6 @@ type mockClient struct {
 
 func (c *mockClient) AuthHeader(image string) (string, error) {
 	return "TOKEN", nil
-}
-
-func TestFilterTags(t *testing.T) {
-	ts := mockServer()
-	defer ts.Close()
-
-	tests := []struct {
-		body         []byte
-		image        string
-		mask         string
-		expectedTags int
-	}{
-		{body: []byte(dockerhubAlpineResp), image: "alpine", expectedTags: 12},
-		{body: []byte(dockerhubAlpineResp), image: "alpine", mask: "3.[0-9]+", expectedTags: 8},
-		{body: []byte(dockerhubAlpineResp), image: "alpine", mask: "2.[0-9]+", expectedTags: 2},
-		{body: []byte(dockerhubAlpineResp), image: "alpine", mask: "[a-z]+", expectedTags: 2},
-		{body: []byte(dockerhubAlpineResp), image: "alpine", mask: "*", expectedTags: 12},
-		{body: []byte(dockerhubAlpineResp), image: "alpine", mask: "_", expectedTags: 0},
-		{body: []byte(gcrKubeApiserverResp), image: "gcr.io/google-containers/kube-apiserver", expectedTags: 302},
-		{body: []byte(gcrKubeApiserverResp), image: "gcr.io/google-containers/kube-apiserver", mask: "v1.10.[0-9]+", expectedTags: 7},
-		{body: []byte(quayEtcdResp), image: "quay.io/coreos/etcd", expectedTags: 26},
-		{body: []byte(quayEtcdResp), image: "quay.io/coreos/etcd", mask: "v3.2.[0-9]+", expectedTags: 3},
-	}
-	for _, test := range tests {
-		var unmarshaledTagsResp tagsResponse
-		if err := json.Unmarshal(test.body, &unmarshaledTagsResp); err != nil {
-			t.Errorf("could not unmarshal tags response: %v", err)
-		}
-		tags := filterTags(&Tags{List: unmarshaledTagsResp.Tags}, test.mask)
-		if tags.Len() != test.expectedTags {
-			t.Errorf("unexpected number of tags returned for  %q %d", test.image, tags.Len())
-		}
-	}
 }
 
 func TestGetTags(t *testing.T) {
@@ -80,8 +46,8 @@ func TestGetTags(t *testing.T) {
 		if err != nil {
 			t.Errorf("error getting tags for %q: %v", test.image, err)
 		}
-		if tags.Len() != test.expectedTags {
-			t.Errorf("unexpected number of tags returned for  %q %d", test.image, tags.Len())
+		if len(tags) != test.expectedTags {
+			t.Errorf("unexpected number of tags returned for  %q %d", test.image, len(tags))
 		}
 	}
 }

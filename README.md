@@ -62,7 +62,7 @@ The `--type` will be inferred from the `name` but can be set explicitly or set t
 gofer add busybox 1.28.1 --mask "1.28.[0-9]+" --type docker
 ```
 ```
-gofer add "https://github.com/kubernetes/kubernetes" v1.9.6 --mask "v1.9.[0-9]+" --type github
+gofer add "https://github.com/kubernetes/kubernetes" v1.17.5 --mask "v1.17.[0-9]+" --type github
 ```
 
 Will result in `./.gofer/config.yaml`:
@@ -76,8 +76,8 @@ dependencies:
   mask: 1.28.[0-9]+
 - name: https://github.com/kubernetes/kubernetes
   type: github
-  version: v1.9.6
-  mask: v1.9.[0-9]+
+  version: v1.17.5
+  mask: v1.17.[0-9]+
 ```
 
 **IMPORTANT when fetching versions for gcr.io docker images set:** 
@@ -108,9 +108,9 @@ dependencies:
   mask: 1.28.[0-9]+
 - name: https://github.com/kubernetes/kubernetes
   type: github
-  version: v1.9.6
-  latestVersion: v1.9.10
-  mask: v1.9.[0-9]+
+  version: v1.17.5
+  latestVersion: v1.17.6
+  mask: v1.17.[0-9]+
 ```
 
 ### Example
@@ -130,7 +130,7 @@ A more complete `config.yaml` example available [here](https://raw.githubusercon
 
 ```
 make test
-# build a docker container
+# build docker container
 make build-container
 # or build a binary to bin/
 make build-binary

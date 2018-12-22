@@ -6,7 +6,7 @@ import (
 	"io"
 	"text/tabwriter"
 
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type ManifestWriter struct {
@@ -20,10 +20,10 @@ type FilterOptions struct {
 }
 
 func (mf ManifestWriter) WriteTable(m Manifest) {
-	fmt.Fprintf(mf.Writer, "Version: %q\n", m.APIVersion)
+	fmt.Fprintf(mf.Writer, "String: %q\n", m.APIVersion)
 	tw := tabwriter.NewWriter(mf.Writer, 0, 0, 5, ' ', 0)
 	fmt.Fprintln(mf.Writer)
-	fmt.Fprintln(tw, "Name\tCurrent Version\tLatest Version\tType\tMask\tNotes")
+	fmt.Fprintln(tw, "Name\tCurrent String\tLatest String\tType\tMask\tNotes")
 	fmt.Fprintln(tw, "------\t------\t------\t------\t------\t------")
 	for _, dep := range filteredDependencies(m.Dependencies, mf.FilterOptions) {
 		fmt.Fprintf(tw, "%s\t%s\t%s\t%s\t%s\t%s\t\n", dep.Name, dep.Version, dep.LatestVersion, dep.GetType(), dep.Mask, dep.Notes)

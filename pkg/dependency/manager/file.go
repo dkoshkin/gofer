@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/dkoshkin/gofer/pkg/dependency"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // New returns an error that formats as the given text.

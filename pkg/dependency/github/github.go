@@ -7,9 +7,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dkoshkin/gofer/pkg/dependency"
-	gh "github.com/google/go-github/v20/github"
+	gh "github.com/google/go-github/v31/github"
 	"golang.org/x/oauth2"
+
+	"github.com/dkoshkin/gofer/pkg/dependency"
+	"github.com/dkoshkin/gofer/pkg/versioned"
 )
 
 const (
@@ -38,26 +40,37 @@ func New() dependency.Fetcher {
 	return Client{github: client, token: token}
 }
 
-func (c Client) LatestVersion(url, mask string) (string, error) {
+func (c Client) AllVersions(url, mask string) (*versioned.Versions, error) {
 	project, err := projectFromURL(url)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	ownerRepoPair := strings.Split(project, "/")
 	if len(ownerRepoPair) != 2 {
-		return "", fmt.Errorf("%q not a valid Github owner:repo format", project)
+		return nil, fmt.Errorf("%q not a valid Github owner:repo format", project)
 	}
 	releases, _, err := c.github.Repositories.ListReleases(context.Background(), ownerRepoPair[0], ownerRepoPair[1], nil)
 	if err != nil {
-		return "", fmt.Errorf("could not get versions :%v", err)
+		return nil, fmt.Errorf("could not get versions :%v", err)
 	}
 	if len(releases) == 0 {
-		return "", dependency.ErrEmptyVerionsList
+		return nil, dependency.ErrEmptyVerionsList
 	}
-	tags := Tags{List: releases}
-	filtertered := filterTags(tags, mask)
+	tags := toStringSlice(releases)
 
-	return filtertered.Latest(), nil
+	versions := versioned.FromStringSlice(tags)
+	filtered := versioned.Filter(versions, mask)
+
+	return filtered, nil
+}
+
+func (c Client) LatestVersion(url, mask string) (*versioned.Versioned, error) {
+	versions, err := c.AllVersions(url, mask)
+	if err != nil {
+		return nil, fmt.Errorf("could not list all tags: %v", err)
+	}
+
+	return versions.Latest(), nil
 }
 
 func projectFromURL(url string) (string, error) {
@@ -66,4 +79,13 @@ func projectFromURL(url string) (string, error) {
 	}
 	trimmed := strings.TrimLeft(url, "https://")
 	return strings.TrimLeft(trimmed, "github.com/"), nil
+}
+
+func toStringSlice(releases []*gh.RepositoryRelease) []string {
+	out := make([]string, 0)
+	for n := range releases {
+		out = append(out, *releases[n].TagName)
+	}
+
+	return out
 }
