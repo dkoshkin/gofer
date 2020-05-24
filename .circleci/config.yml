@@ -23,7 +23,7 @@ jobs:
           command: make test-local
       - run: 
           name: Build container 
-          command: make build-container
+          command: make build-image
       - run: 
           name: Docker push 
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS && make push

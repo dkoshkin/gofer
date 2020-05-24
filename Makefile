@@ -14,8 +14,8 @@ endif
 CONTAINER = dkoshkin/gofer
 PKG = github.com/dkoshkin/gofer
 
-.PHONY: build-container
-build-container:
+.PHONY: build-image
+build-image:
 	docker build                                \
 		--build-arg VERSION="$(VERSION)"        \
 		--build-arg BUILD_DATE="$(BUILD_DATE)"  \
@@ -54,7 +54,7 @@ build-binary-local:
 		-o bin/gofer-$(GOOS)-$(GOARCH) cmd/cli/main.go
 
 .PHONY: build-all
-build-all: build-container build-binaries
+build-all: build-image build-binaries
 
 .PHONY: test
 test:

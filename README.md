@@ -131,7 +131,7 @@ A more complete `config.yaml` example available [here](https://raw.githubusercon
 ```
 make test
 # build docker container
-make build-container
+make build-image
 # or build a binary to bin/
 make build-binary
 ```
