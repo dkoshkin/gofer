@@ -8,7 +8,7 @@ jobs:
   build:
     docker:
       # specify the version
-      - image: circleci/golang:1.11.3
+      - image: circleci/golang:1.14.3
     steps:
       - checkout
       - setup_remote_docker
@@ -34,7 +34,7 @@ jobs:
           command: | 
             if [[ -n "$CIRCLE_TAG" ]]
             then
-              wget https://github.com/tcnksm/ghr/releases/download/v0.12.0/ghr_v0.12.0_linux_amd64.tar.gz -O ghr.tar.gz && tar xvzf ghr.tar.gz && rm ghr.tar.gz
+              wget https://github.com/tcnksm/ghr/releases/download/v0.12.2/ghr_v0.12.2_linux_amd64.tar.gz -O ghr.tar.gz && tar xvzf ghr.tar.gz && rm ghr.tar.gz
               VERSION=$CIRCLE_TAG make tag-and-push
               VERSION=stable make tag-and-push
               GOOS=darwin GOARCH=amd64 make build-binary-local
