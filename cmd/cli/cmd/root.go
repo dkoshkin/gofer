@@ -26,7 +26,7 @@ const (
 )
 
 type Version struct {
-	Version   string `json:"String"`
+	Version   string `json:"Version"`
 	BuildDate string `json:"BuildDate"`
 }
 
