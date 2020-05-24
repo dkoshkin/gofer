@@ -11,7 +11,7 @@ ifeq ($(origin GOARCH), undefined)
     GOARCH := $(shell go env GOARCH)
 endif
 
-CONTAINER = dkoshkin/gofer
+IMAGE = dkoshkin/gofer
 PKG = github.com/dkoshkin/gofer
 
 .PHONY: build-image
@@ -19,7 +19,7 @@ build-image:
 	docker build                                \
 		--build-arg VERSION="$(VERSION)"        \
 		--build-arg BUILD_DATE="$(BUILD_DATE)"  \
-		-f build/docker/Dockerfile -t $(CONTAINER) .
+		-f build/docker/Dockerfile -t $(IMAGE) .
 
 .PHONY: builder
 builder:
@@ -72,12 +72,12 @@ test-local:
 
 .PHONY: push
 push:
-	docker push $(CONTAINER):latest
+	docker push $(IMAGE):latest
 
 .PHONY: tag
 tag:
-	docker tag $(CONTAINER) $(CONTAINER):$(VERSION)
+	docker tag $(IMAGE) $(IMAGE):$(VERSION)
 
 .PHONY: tag-and-push
 tag-and-push: tag
-	docker push $(CONTAINER):$(VERSION)
+	docker push $(IMAGE):$(VERSION)
