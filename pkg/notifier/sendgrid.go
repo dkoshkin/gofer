@@ -289,6 +289,7 @@ var emailTemplate = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "h
 										{{range .NewDependencies}}
 											<li>
 												{{ .Name }}<br />
+												<span style="padding-left: 20px">Version: {{ .Version }}</span><br />
 												<span style="padding-left: 20px">Latest Version: {{ .LatestVersion }}</span><br />
 												<span style="padding-left: 20px">Type: {{ .Type }}</span><br />
 												<span style="padding-left: 20px">Mask: {{ .Mask }}</span><br />
@@ -312,6 +313,7 @@ var emailTemplate = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "h
 										{{range .UpdatedDependencies}}
 											<li>
 												{{ .Name }}<br />
+												<span style="padding-left: 20px">Version: {{ .Version }}</span><br />
 												<span style="padding-left: 20px">Latest Version: {{ .LatestVersion }}</span><br />
 												<span style="padding-left: 20px">Type: {{ .Type }}</span><br />
 												<span style="padding-left: 20px">Mask: {{ .Mask }}</span><br />

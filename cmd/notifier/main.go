@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/dkoshkin/gofer/pkg/dependency"
 	"github.com/dkoshkin/gofer/pkg/dependency/manager"
@@ -42,23 +43,40 @@ func main() {
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
 
-func handler(w http.ResponseWriter, _ *http.Request) {
+func handler(w http.ResponseWriter, r *http.Request) {
 	log.Print("Handler Triggered")
 
-	err := run()
+	var manifest dependency.Manifest
+	err := json.NewDecoder(r.Body).Decode(&manifest)
 	if err != nil {
-		fmt.Fprintf(w, "got an error: %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
+
+	updated, err := run(&manifest)
+	if err != nil {
+		http.Error(w, fmt.Errorf("got an error: %v", err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	js, err := json.Marshal(updated)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
-func run() error {
+func run(manifest *dependency.Manifest) (*dependency.Manifest, error) {
 	projectID, collection, doc, err := checkDatastoreEnvs()
 	if err != nil {
-		return fmt.Errorf("error reading env: %v", err)
+		return nil, fmt.Errorf("error reading env: %v", err)
 	}
 	sendgridAPIKey, notifierSenderName, notifierSenderEmail, notifierSubject, contacts, err := checkNotifierEnvs()
 	if err != nil {
-		return fmt.Errorf("error reading env: %v", err)
+		return nil, fmt.Errorf("error reading env: %v", err)
 	}
 
 	var rw manager.ReadWriter
@@ -66,44 +84,37 @@ func run() error {
 	if len(credentialsBase64Bytes) != 0 {
 		credentialsJSONBytes, err := base64.StdEncoding.DecodeString(credentialsBase64Bytes)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		rw, err = manager.NewFirestoreManagerWithCredentialsJSON(projectID, collection, doc, credentialsJSONBytes)
 	} else {
 		rw, err = manager.NewFirestoreManager(projectID, collection, doc)
 	}
 	if err != nil {
-		return fmt.Errorf("error setting up datastore: %v", err)
+		return nil, fmt.Errorf("error setting up datastore: %v", err)
 	}
 
-	dependenciesJSON := os.Getenv(dependenciesYAMLEnv)
-	if dependenciesJSON != "" {
-		manifest, err := dependency.FromBytes([]byte(dependenciesJSON))
-		if err != nil {
-			return fmt.Errorf("error unmarshalling from bytes: %v", err)
-		}
-		_, err = rw.Init("", manifest.Dependencies...)
-		if err != nil {
-			return fmt.Errorf("error initializing dependencies: %v", err)
-		}
+	_, err = rw.Init("", manifest.Dependencies...)
+	if err != nil {
+		return nil, fmt.Errorf("error initializing dependencies: %v", err)
 	}
 
 	newDependencies, updatedDependencies, existingDependencies, err := findDifferences(rw)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = notifier.NewEmailNotifier(sendgridAPIKey, notifierSenderName, notifierSenderEmail, notifierSubject, contacts).Send(newDependencies, updatedDependencies)
 	if err != nil {
-		return fmt.Errorf("error sending with notifier: %v", err)
+		return nil, fmt.Errorf("error sending with notifier: %v", err)
 	}
 
-	err = updateInStore(rw, newDependencies, updatedDependencies, existingDependencies)
+	updated, err := updateInStore(rw, newDependencies, updatedDependencies, existingDependencies)
 	if err != nil {
-		return fmt.Errorf("error updating dependencies in the store: %v", err)
+		return nil, fmt.Errorf("error updating dependencies in the store: %v", err)
 	}
 
-	return nil
+	return updated, nil
 }
 
 func checkDatastoreEnvs() (projectID string, collection string, doc string, err error) {
@@ -192,12 +203,12 @@ func findDifferences(rw manager.ReadWriter) ([]dependency.Spec, []dependency.Spe
 	return newDependencies, updatedDependencies, existingDependencies, nil
 }
 
-func updateInStore(rw manager.ReadWriter, newDependencies []dependency.Spec, updatedDependencies []dependency.Spec, existingDependencies []dependency.Spec) error {
+func updateInStore(rw manager.ReadWriter, newDependencies []dependency.Spec, updatedDependencies []dependency.Spec, existingDependencies []dependency.Spec) (*dependency.Manifest, error) {
 	dependencies := make([]dependency.Spec, 0)
 	dependencies = append(dependencies, newDependencies...)
 	dependencies = append(dependencies, updatedDependencies...)
 	dependencies = append(dependencies, existingDependencies...)
 
 	manifest := dependency.Manifest{Dependencies: dependencies}
-	return rw.Write(manifest)
+	return &manifest, rw.Write(manifest)
 }
