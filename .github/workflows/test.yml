@@ -21,4 +21,5 @@ jobs:
     - name: Run unit tests
       run: make test
       env:
+        DATASTORE_PROJECT_ID: ${{ secrets.DATASTORE_PROJECT_ID }}
         DATASTORE_CREDENTIALS_BASE64: ${{ secrets.DATASTORE_CREDENTIALS_BASE64 }}
