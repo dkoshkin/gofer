@@ -27,8 +27,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: unit-test
     env:
-      IMAGE-CLI: dkoshkin/gofer
-      IMAGE-NOTIFIER: dkoshkin/gofer-notifier
+      IMAGE_CLI: dkoshkin/gofer
+      IMAGE_NOTIFIER: dkoshkin/gofer-notifier
+      IMAGE_NOTIFIER_GCR: gcr.io/gofer-278221/gofer-notifier
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -39,6 +40,8 @@ jobs:
       - name: Get BUILD_DATE
         id: date
         run: echo "::set-output name=date::$(date -u)"
+      - name: Docker Login to GCR
+        run: echo ${{ secrets.GCR_SA_JSON }} | docker login -u _json_key --password-stdin ${{ env.IMAGE_NOTIFIER_GCR }}
       - name: Build the builder container
         run: make builder
       - name: Build and push CLI image
@@ -48,7 +51,7 @@ jobs:
           build_args: VERSION=${{steps.version.outputs.version}},BUILD_DATE=${{steps.date.outputs.date}}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: ${{ env.IMAGE-CLI }}
+          repository: ${{ env.IMAGE_CLI }}
           tags: stable,latest
           tag_with_ref: true
       - name: Build and push notifier image
@@ -58,6 +61,8 @@ jobs:
           build_args: VERSION=${{steps.version.outputs.version}},BUILD_DATE=${{steps.date.outputs.date}}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: ${{ env.IMAGE-NOTIFIER }}
+          repository: ${{ env.IMAGE_NOTIFIER }}
           tags: stable,latest
           tag_with_ref: true
+      - name: Dockre Push notifier image to GCR
+        run: make tag-and-push-gcr
