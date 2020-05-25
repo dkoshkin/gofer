@@ -11,8 +11,10 @@ ifeq ($(origin GOARCH), undefined)
     GOARCH := $(shell go env GOARCH)
 endif
 
-IMAGE-CLI = dkoshkin/gofer
-IMAGE-NOTIFIER = dkoshkin/gofer-notifier
+IMAGE_CLI = dkoshkin/gofer
+IMAGE_NOTIFIER = dkoshkin/gofer-notifier
+
+IMAGE_NOTIFIER_GCR = gcr.io/gofer-278221/gofer-notifier
 
 PKG = github.com/dkoshkin/gofer
 
@@ -21,14 +23,14 @@ build-cli-image:
 	docker build                                \
 		--build-arg VERSION="$(VERSION)"        \
 		--build-arg BUILD_DATE="$(BUILD_DATE)"  \
-		-f build/docker/Dockerfile.cli -t $(IMAGE-CLI) .
+		-f build/docker/Dockerfile.cli -t $(IMAGE_CLI) .
 
-.PHONY:firestore_test.go
+.PHONY: build-notifier-image
 build-notifier-image:
 	docker build                                \
 		--build-arg VERSION="$(VERSION)"        \
 		--build-arg BUILD_DATE="$(BUILD_DATE)"  \
-		-f build/docker/Dockerfile.notifier -t $(IMAGE-NOTIFIER) .
+		-f build/docker/Dockerfile.notifier -t $(IMAGE_NOTIFIER) .
 
 .PHONY: builder
 builder:
@@ -106,15 +108,23 @@ test-local:
 
 .PHONY: push
 push:
-	docker push $(IMAGE-CLI):latest
-	docker push $(IMAGE-NOTIFIER):latest
+	docker push $(IMAGE_CLI):latest
+	docker push $(IMAGE_NOTIFIER):latest
 
 .PHONY: tag
 tag:
-	docker tag $(IMAGE-CLI) $(IMAGE-CLI):$(VERSION)
-	docker tag $(IMAGE-NOTIFIER) $(IMAGE-NOTIFIER):$(VERSION)
+	docker tag $(IMAGE_CLI) $(IMAGE_CLI):$(VERSION)
+	docker tag $(IMAGE_NOTIFIER) $(IMAGE_NOTIFIER):$(VERSION)
 
 .PHONY: tag-and-push
 tag-and-push: tag
-	docker push $(IMAGE-CLI):$(VERSION)
-	docker push $(IMAGE-docker push $(IMAGE-CLI):$(VERSION)):$(VERSION)
+	docker push $(IMAGE_CLI):$(VERSION)
+	docker push $(IMAGE_NOTIFIER):$(VERSION)
+
+.PHONY: tag-gcr
+tag-gcr:
+	docker tag $(IMAGE_NOTIFIER) $(IMAGE_NOTIFIER_GCR):$(VERSION)
+
+.PHONY: tag-and-push-gcr
+tag-and-push-gcr: tag-gcr
+	docker push $(IMAGE_NOTIFIER_GCR):$(VERSION)
