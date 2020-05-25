@@ -10,7 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
-	"reflect"
 	"strings"
 )
 
@@ -193,7 +192,7 @@ func findDifferences(rw manager.ReadWriter) ([]dependency.Spec, []dependency.Spe
 	for k, v := range dependenciesMap {
 		if dependency, ok := updatedDependenciesMap[k]; !ok {
 			newDependencies = append(newDependencies, v)
-		} else if !reflect.DeepEqual(v, dependency) {
+		} else if v.Version != dependency.LatestVersion {
 			updatedDependencies = append(updatedDependencies, dependency)
 		} else {
 			existingDependencies = append(existingDependencies, dependency)
