@@ -6,6 +6,8 @@ import (
 	"github.com/dkoshkin/gofer/pkg/dependency"
 	"github.com/dkoshkin/gofer/pkg/dependency/manager"
 	"github.com/dkoshkin/gofer/pkg/notifier"
+	log "github.com/sirupsen/logrus"
+	"net/http"
 	"os"
 	"reflect"
 	"strings"
@@ -32,10 +34,20 @@ const (
 )
 
 func main() {
+	http.HandleFunc("/", handler)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+}
+
+func handler(w http.ResponseWriter, _ *http.Request) {
+	log.Print("Handler Triggered")
+
 	err := run()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error reading env: %v", err)
-		os.Exit(1)
+		fmt.Fprintf(w, "got an error: %v", err)
 	}
 }
 
