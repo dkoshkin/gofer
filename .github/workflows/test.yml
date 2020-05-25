@@ -12,8 +12,6 @@ on:
 jobs:
   unit-test:
     runs-on: ubuntu-latest
-    env:
-      FIRESTORE_TEST_CREDENTIALS_JSON: ${{ secrets.FIRESTORE_TEST_CREDENTIALS_JSON }}
 
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -22,3 +20,5 @@ jobs:
       run: make builder
     - name: Run unit tests
       run: make test
+      env:
+        FIRESTORE_TEST_CREDENTIALS_JSON: ${{ secrets.FIRESTORE_TEST_CREDENTIALS_JSON }}
