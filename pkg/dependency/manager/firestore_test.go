@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	datastoreCredentialsJSONEnv = "DATASTORE_CREDENTIALS_JSON"
+	datastoreCredentialsJSONEnv = "DATASTORE_CREDENTIALS_BASE64"
 	datastoreProjectIDEnv       = "DATASTORE_PROJECT_ID"
 
 	collection = "dependencies-test"

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/dkoshkin/gofer/pkg/dependency"
 	"github.com/dkoshkin/gofer/pkg/dependency/manager"
@@ -18,10 +19,10 @@ var (
 const (
 	dependenciesYAMLEnv = "DEPENDENCIES_YAML"
 
-	datastoreCredentialsJSONEnv = "DATASTORE_CREDENTIALS_JSON"
-	datastoreProjectIDEnv       = "DATASTORE_PROJECT_ID"
-	datastoreCollectionEnv      = "DATASTORE_COLLECTION"
-	datastoreDocEnv             = "DATASTORE_DOC"
+	datastoreCredentialsBase64Env = "DATASTORE_CREDENTIALS_BASE64"
+	datastoreProjectIDEnv         = "DATASTORE_PROJECT_ID"
+	datastoreCollectionEnv        = "DATASTORE_COLLECTION"
+	datastoreDocEnv               = "DATASTORE_DOC"
 
 	sendgridAPIKeyEnv      = "SENDGRID_API_KEY"
 	notifierSenderNameEnv  = "NOTIFIER_SENDER_NAME"
@@ -49,8 +50,12 @@ func run() error {
 	}
 
 	var rw manager.ReadWriter
-	credentialsJSONBytes := []byte(os.Getenv(datastoreCredentialsJSONEnv))
-	if len(credentialsJSONBytes) != 0 {
+	credentialsBase64Bytes := os.Getenv(datastoreCredentialsBase64Env)
+	if len(credentialsBase64Bytes) != 0 {
+		credentialsJSONBytes, err := base64.StdEncoding.DecodeString(credentialsBase64Bytes)
+		if err != nil {
+			return err
+		}
 		rw, err = manager.NewFirestoreManagerWithCredentialsJSON(projectID, collection, doc, credentialsJSONBytes)
 	} else {
 		rw, err = manager.NewFirestoreManager(projectID, collection, doc)
