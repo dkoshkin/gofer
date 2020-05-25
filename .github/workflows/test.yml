@@ -21,4 +21,4 @@ jobs:
     - name: Run unit tests
       run: make test
       env:
-        FIRESTORE_TEST_CREDENTIALS_JSON: ${{ secrets.FIRESTORE_TEST_CREDENTIALS_JSON }}
+        DATASTORE_CREDENTIALS_JSON: ${{ secrets.DATASTORE_CREDENTIALS_JSON }}

@@ -20,7 +20,7 @@ jobs:
       - name: Run unit tests
         run: make test
         env:
-          FIRESTORE_TEST_CREDENTIALS_JSON: ${{ secrets.FIRESTORE_TEST_CREDENTIALS_JSON }}
+          DATASTORE_CREDENTIALS_JSON: ${{ secrets.DATASTORE_CREDENTIALS_JSON }}
 
   release:
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
           dockerfile: build/docker/Dockerfile
           build_args: VERSION=${{steps.version.outputs.version}},BUILD_DATE=${{steps.date.outputs.date}}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD   }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ env.IMAGE }}
           tags: stable,latest
           tag_with_ref: true

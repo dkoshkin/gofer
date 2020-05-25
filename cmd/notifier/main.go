@@ -18,11 +18,10 @@ var (
 const (
 	dependenciesYAMLEnv = "DEPENDENCIES_YAML"
 
-	credentialsJSONEnv = "FIRESTORE_CREDENTIALS_JSON"
-
-	projectIDEnv           = "PROJECT_ID"
-	datastoreCollectionEnv = "DATASTORE_COLLECTION"
-	datastoreDocEnv        = "DATASTORE_DOC"
+	datastoreCredentialsJSONEnv = "DATASTORE_CREDENTIALS_JSON"
+	datastoreProjectIDEnv       = "DATASTORE_PROJECT_ID"
+	datastoreCollectionEnv      = "DATASTORE_COLLECTION"
+	datastoreDocEnv             = "DATASTORE_DOC"
 
 	sendgridAPIKeyEnv      = "SENDGRID_API_KEY"
 	notifierSenderNameEnv  = "NOTIFIER_SENDER_NAME"
@@ -50,7 +49,7 @@ func run() error {
 	}
 
 	var rw manager.ReadWriter
-	credentialsJSONBytes := []byte(os.Getenv(credentialsJSONEnv))
+	credentialsJSONBytes := []byte(os.Getenv(datastoreCredentialsJSONEnv))
 	if len(credentialsJSONBytes) != 0 {
 		rw, err = manager.NewFirestoreManagerWithCredentialsJSON(projectID, collection, doc, credentialsJSONBytes)
 	} else {
@@ -91,8 +90,8 @@ func run() error {
 }
 
 func checkDatastoreEnvs() (projectID string, collection string, doc string, err error) {
-	if projectID = os.Getenv(projectIDEnv); projectID == "" {
-		err = fmt.Errorf("env %s must be set", projectIDEnv)
+	if projectID = os.Getenv(datastoreProjectIDEnv); projectID == "" {
+		err = fmt.Errorf("env %s must be set", datastoreProjectIDEnv)
 		return
 	}
 	if collection = os.Getenv(datastoreCollectionEnv); collection == "" {

@@ -3,32 +3,30 @@ package manager
 import (
 	"fmt"
 	"github.com/dkoshkin/gofer/pkg/dependency"
-	"io/ioutil"
 	"math/rand"
 	"os"
-	"path/filepath"
 	"reflect"
 	"testing"
 	"time"
 )
 
 const (
-	credentialsJSONEnv = "FIRESTORE_TEST_CREDENTIALS_JSON"
-
-	projectID           = "gofer-278221"
-	credentialsJSONFile = "gofer-278221-4a60a7afccbd.json"
+	datastoreCredentialsJSONEnv = "DATASTORE_CREDENTIALS_JSON"
+	datastoreProjectIDEnv       = "DATASTORE_PROJECT_ID"
 
 	collection = "dependencies-test"
 )
 
 func TestWriteRead(t *testing.T) {
-	credentialsJSONBytes := []byte(os.Getenv(credentialsJSONEnv))
+	credentialsJSONBytes := []byte(os.Getenv(datastoreCredentialsJSONEnv))
 	if len(credentialsJSONBytes) == 0 {
-		var err error
-		credentialsJSONBytes, err = ioutil.ReadFile(filepath.Join("../../../", "hack", "env", credentialsJSONFile))
-		if err != nil {
-			t.Fatalf("%s is not set and got error trying to read file: %v", credentialsJSONEnv, err)
-		}
+		t.Fatalf("%s is not set", datastoreCredentialsJSONEnv)
+
+	}
+	projectID := os.Getenv(datastoreProjectIDEnv)
+	if len(projectID) == 0 {
+		t.Fatalf("%s is not set", datastoreProjectIDEnv)
+
 	}
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
