@@ -1,6 +1,6 @@
 # Gofer
 
-A CLI utility to help you keep your project's ever-changing dependency versions up to date.
+A CLI and notifier utilities to help you keep your project's ever-changing dependency versions up to date.
 
 ## The Name
 According to the dictionary: [gofer](https://www.merriam-webster.com/dictionary/gofer) - an employee whose duties include running errands 
@@ -9,13 +9,23 @@ The tool is also written in Go, a language with a recognizable [gopher mascot](h
 
 ## Motivation
 
-For the last 2 years I maintained the [kismatic](https://github.com/apprenda/kismatic) project, a Kubernetes cluster lifecycle management tool.
+The process of checking for new docker image versions and Github project releases is pretty time consuming. The idea for a tool that would automate that process was born.
 
-As the project grew the process of checking for new docker image versions and Github project releases became pretty time consuming. The idea for a tool that would automate that process was born.
+## Supported Dependencies
 
-## Prerequisites
+* docker - depending on the implementation of the registry the mechanism to provide the credentials will be different
+  * [dockerhub](https://hub.docker.com/)
+  * gcr.io
+  * quay.io
+  * private registry - (in progress)
+* [github](https://github.com/)
+* *manual* - the `dig` command will skip this dependency when fetching latest version
 
-### Using a Docker container
+## CLI Tool
+
+### Prerequisites
+
+#### Using a Docker container
 
 * `docker` installed
 * if desired add command to your path:
@@ -27,7 +37,7 @@ echo 'docker run                                    \
 && chmod +x /usr/local/bin/gofer
 ```
 
-### Using a binary
+#### Using a binary
 
 * a Linux or macOS
 ```
@@ -37,7 +47,7 @@ wget https://github.com/dkoshkin/gofer/releases/download/$VERSION/gofer-linux-am
 wget https://github.com/dkoshkin/gofer/releases/download/$VERSION/gofer-darwin-amd64 -O /usr/local/bin/gofer
 ```
 
-## Usage
+### Usage
 
 1) Initialize an empty config file in `./.gofer/config.yaml`
 
@@ -113,25 +123,27 @@ dependencies:
   mask: v1.17.[0-9]+
 ```
 
-### Example
+#### Example
 A more complete `config.yaml` example available [here](https://raw.githubusercontent.com/dkoshkin/gofer/master/examples/config.yaml).
 
-## Supported Dependencies
-
-* docker - depending on the implementation of the registry the mechanism to provide the credentials will be different
-  * [dockerhub](https://hub.docker.com/)
-  * gcr.io
-  * quay.io
-  * private registry - (in progress)
-* [github](https://github.com/)
-* *manual* - the `dig` command will skip this dependency when fetching latest version
-
-## Development
+### Development
 
 ```
 make test
 # build docker container
-make build-image
+make build-cli-image
 # or build a binary to bin/
-make build-binary
+make build-cli-binary
+```
+
+## Notifier
+
+### Development
+
+```
+make test
+# build docker container
+make build-notifier-image
+# or build a binary to bin/
+make build-notifier-binary
 ```

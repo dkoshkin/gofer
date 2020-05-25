@@ -33,7 +33,7 @@ func NewFileManager(filePath string) ReadWriter {
 	return FileManager{filePath: filePath}
 }
 
-func (m FileManager) Init(apiVersion string) (*dependency.Manifest, error) {
+func (m FileManager) Init(apiVersion string, dependencies ...dependency.Spec) (*dependency.Manifest, error) {
 	manifestFile := filepath.Clean(m.filePath)
 	fi, err := os.Stat(manifestFile)
 	if err != nil {
@@ -68,7 +68,7 @@ func (m FileManager) Init(apiVersion string) (*dependency.Manifest, error) {
 	}
 	defer f.Close()
 
-	manifest := &dependency.Manifest{APIVersion: apiVersion}
+	manifest := &dependency.Manifest{APIVersion: apiVersion, Dependencies: dependencies}
 
 	data, err := yaml.Marshal(manifest)
 	if err != nil {

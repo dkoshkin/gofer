@@ -19,11 +19,10 @@ ARG BUILD_DATE
 ENV CGO_ENABLED=0
 WORKDIR /src/github.com/dkoshkin/gofer
 COPY . .
-RUN make build-cli-binary-local
+RUN make build-notifier-binary-local
 
 FROM alpine:latest
 WORKDIR /gofer
 RUN apk --no-cache add ca-certificates openssl
-COPY --from=builder /src/github.com/dkoshkin/gofer/bin/gofer-cli-linux-amd64 /usr/local/bin/gofer
+COPY --from=builder /src/github.com/dkoshkin/gofer/bin/gofer-notifier-linux-amd64 /usr/local/bin/gofer
 ENTRYPOINT [ "/usr/local/bin/gofer" ]
-CMD ["--help"]

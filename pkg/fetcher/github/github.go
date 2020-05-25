@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
+	"github.com/dkoshkin/gofer/pkg/fetcher"
 	"net/http"
 	"os"
 	"strings"
@@ -10,7 +11,6 @@ import (
 	gh "github.com/google/go-github/v31/github"
 	"golang.org/x/oauth2"
 
-	"github.com/dkoshkin/gofer/pkg/dependency"
 	"github.com/dkoshkin/gofer/pkg/versioned"
 )
 
@@ -24,7 +24,7 @@ type Client struct {
 }
 
 // New returns a dependency fetcher for github
-func New() dependency.Fetcher {
+func New() fetcher.Fetcher {
 	var tc *http.Client
 	// use client token if provided
 	token := os.Getenv(githubTokeneEnv)
@@ -54,7 +54,7 @@ func (c Client) AllVersions(url, mask string) (*versioned.Versions, error) {
 		return nil, fmt.Errorf("could not get versions :%v", err)
 	}
 	if len(releases) == 0 {
-		return nil, dependency.ErrEmptyVerionsList
+		return nil, fetcher.ErrEmptyVerionsList
 	}
 	tags := toStringSlice(releases)
 

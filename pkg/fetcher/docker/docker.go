@@ -2,7 +2,7 @@ package docker
 
 import (
 	"fmt"
-	"github.com/dkoshkin/gofer/pkg/dependency"
+	"github.com/dkoshkin/gofer/pkg/fetcher"
 	"github.com/dkoshkin/gofer/pkg/registry"
 	"github.com/dkoshkin/gofer/pkg/versioned"
 )
@@ -11,7 +11,7 @@ type Client struct {
 }
 
 // New returns a dependency fetcher for Docker images
-func New() dependency.Fetcher {
+func New() fetcher.Fetcher {
 	return Client{}
 }
 
@@ -22,7 +22,7 @@ func (c Client) AllVersions(image, mask string) (*versioned.Versions, error) {
 		return nil, err
 	}
 	if len(tags) == 0 {
-		return nil, dependency.ErrEmptyVerionsList
+		return nil, fetcher.ErrEmptyVerionsList
 	}
 
 	versions := versioned.FromStringSlice(tags)

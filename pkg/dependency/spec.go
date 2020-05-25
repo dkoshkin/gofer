@@ -1,6 +1,11 @@
 package dependency
 
-import "strings"
+import (
+	"crypto/sha1"
+	"encoding/hex"
+	"fmt"
+	"strings"
+)
 
 const (
 	UnknownType = "unknown"
@@ -22,6 +27,15 @@ type Spec struct {
 	LatestVersion string `yaml:"latestVersion,omitempty" json:"latestVersion"`
 	Mask          string `yaml:"mask,omitempty" json:"mask"`
 	Notes         string `yaml:"notes,omitempty" json:"notes"`
+}
+
+func (s Spec) Hash() (string, error) {
+	h := sha1.New()
+	_, err := fmt.Fprintf(h, "%s%s%s", s.Name, s.Type, s.Mask)
+	if err != nil {
+		return "", fmt.Errorf("could not get hash: %v", err)
+	}
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
 func (s Spec) GetType() string {

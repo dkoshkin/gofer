@@ -2,3 +2,5 @@ gofer
 bin/
 .gofer/
 .idea/
+pkg/dependency/manager/testdata/gofer-278221-4a60a7afccbd.json
+hack/env/

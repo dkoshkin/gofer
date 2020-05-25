@@ -1,32 +1,10 @@
 apiversion: v0.1
 dependencies:
-- name: alpine
+- name: busybox
   type: docker
-  version: "3.6"
-- name: google/cadvisor
-  type: docker
-  version: v0.28.1
-- name: google/cadvisor
-  type: docker
-  version: v0.29.2
-  mask: v0.29.[0-9]+
-- name: cadvisor
-  type: docker
-  version: v0.28.1
-  mask: v0.29.[0-9]+
-- name: gcr.io/google-containers/kube-apiserver
-  type: docker
-  version: v1.17.5
-  mask: v1.17.[0-9]+
-- name: quay.io/coreos/etcd
-  type: docker
-  version: v3.1.13
-  mask: v3.1.[0-9]+
+  version: 1.28.1
+  mask: 1.28.[0-9]+
 - name: https://github.com/kubernetes/kubernetes
   type: github
   version: v1.17.5
   mask: v1.17.[0-9]+
-- name: rails
-  type: manual
-  version: 5.2.1
-  mask: 5.[0-9]+.[0-9]+
