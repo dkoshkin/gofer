@@ -7,6 +7,7 @@ import (
 	"github.com/dkoshkin/gofer/pkg/notifier"
 	"os"
 	"reflect"
+	"strings"
 )
 
 var (
@@ -17,11 +18,17 @@ var (
 const (
 	dependenciesYAMLEnv = "DEPENDENCIES_YAML"
 
-	credentialsJSONEnv = "TEST_CREDENTIALS_JSON"
+	credentialsJSONEnv = "FIRESTORE_CREDENTIALS_JSON"
 
 	projectIDEnv           = "PROJECT_ID"
 	datastoreCollectionEnv = "DATASTORE_COLLECTION"
 	datastoreDocEnv        = "DATASTORE_DOC"
+
+	sendgridAPIKeyEnv      = "SENDGRID_API_KEY"
+	notifierSenderNameEnv  = "NOTIFIER_SENDER_NAME"
+	notifierSenderEmailEnv = "NOTIFIER_SENDER_EMAIL"
+	notifierSubjectEnv     = "NOTIFIER_SUBJECT"
+	notifierContactsEnv    = "NOTIFIER_CONTACTS"
 )
 
 func main() {
@@ -34,6 +41,10 @@ func main() {
 
 func run() error {
 	projectID, collection, doc, err := checkDatastoreEnvs()
+	if err != nil {
+		return fmt.Errorf("error reading env: %v", err)
+	}
+	sendgridAPIKey, notifierSenderName, notifierSenderEmail, notifierSubject, contacts, err := checkNotifierEnvs()
 	if err != nil {
 		return fmt.Errorf("error reading env: %v", err)
 	}
@@ -66,7 +77,7 @@ func run() error {
 		return err
 	}
 
-	err = notifier.NewIOWriter(os.Stdout).Send(newDependencies, updatedDependencies)
+	err = notifier.NewEmailNotifier(sendgridAPIKey, notifierSenderName, notifierSenderEmail, notifierSubject, contacts).Send(newDependencies, updatedDependencies)
 	if err != nil {
 		return fmt.Errorf("error sending with notifier: %v", err)
 	}
@@ -92,6 +103,39 @@ func checkDatastoreEnvs() (projectID string, collection string, doc string, err 
 		err = fmt.Errorf("env %s must be set", datastoreDocEnv)
 		return
 	}
+	return
+}
+
+func checkNotifierEnvs() (sendgridAPIKey string, notifierSenderName string, notifierSenderEmail string, notifierSubject string, contacts []notifier.Contacts, err error) {
+	if sendgridAPIKey = os.Getenv(sendgridAPIKeyEnv); sendgridAPIKey == "" {
+		err = fmt.Errorf("env %s must be set", sendgridAPIKeyEnv)
+		return
+	}
+	if notifierSenderName = os.Getenv(notifierSenderNameEnv); notifierSenderName == "" {
+		err = fmt.Errorf("env %s must be set", notifierSenderNameEnv)
+		return
+	}
+	if notifierSenderEmail = os.Getenv(notifierSenderEmailEnv); notifierSenderEmail == "" {
+		err = fmt.Errorf("env %s must be set", notifierSenderEmailEnv)
+		return
+	}
+	if notifierSubject = os.Getenv(notifierSubjectEnv); notifierSubject == "" {
+		err = fmt.Errorf("env %s must be set", notifierSubjectEnv)
+		return
+	}
+	var contactsString string
+	if contactsString = os.Getenv(notifierContactsEnv); contactsString == "" {
+		err = fmt.Errorf("env %s must be set", notifierContactsEnv)
+		return
+	}
+	for _, contactString := range strings.Split(contactsString, "|") {
+		contact := strings.Split(contactString, ":")
+		contacts = append(contacts, notifier.Contacts{
+			Name:    contact[0],
+			Address: contact[1],
+		})
+	}
+
 	return
 }
 
