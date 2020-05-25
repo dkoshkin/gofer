@@ -94,6 +94,7 @@ test:
 		-u root:root                        \
 		-v "$(shell pwd)":/src/$(PKG)       \
 		-w /src/$(PKG)                      \
+		-e DATASTORE_CREDENTIALS_JSON="$(DATASTORE_CREDENTIALS_JSON)" \
 		gofer-base                          \
 		make test-local
 
