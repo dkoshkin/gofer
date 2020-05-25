@@ -72,7 +72,7 @@ func run() error {
 		}
 	}
 
-	newDependencies, updatedDependencies, err := findDifferences(rw)
+	newDependencies, updatedDependencies, existingDependencies, err := findDifferences(rw)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func run() error {
 		return fmt.Errorf("error sending with notifier: %v", err)
 	}
 
-	err = updateInStore(rw, newDependencies, updatedDependencies)
+	err = updateInStore(rw, newDependencies, updatedDependencies, existingDependencies)
 	if err != nil {
 		return fmt.Errorf("error updating dependencies in the store: %v", err)
 	}
@@ -139,14 +139,14 @@ func checkNotifierEnvs() (sendgridAPIKey string, notifierSenderName string, noti
 	return
 }
 
-func findDifferences(rw manager.ReadWriter) ([]dependency.Spec, []dependency.Spec, error) {
+func findDifferences(rw manager.ReadWriter) ([]dependency.Spec, []dependency.Spec, []dependency.Spec, error) {
 	manifest, err := rw.Read()
 	if err != nil {
-		return nil, nil, fmt.Errorf("error reading from datastore: %v", err)
+		return nil, nil, nil, fmt.Errorf("error reading from datastore: %v", err)
 	}
 	_, dependenciesMap, err := manifest.ToMap()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	updatedManifest, err := manifest.Latest()
@@ -156,27 +156,31 @@ func findDifferences(rw manager.ReadWriter) ([]dependency.Spec, []dependency.Spe
 
 	_, updatedDependenciesMap, err := updatedManifest.ToMap()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	newDependencies := make([]dependency.Spec, 0)
 	updatedDependencies := make([]dependency.Spec, 0)
+	existingDependencies := make([]dependency.Spec, 0)
 
 	for k, v := range dependenciesMap {
 		if dependency, ok := updatedDependenciesMap[k]; !ok {
 			newDependencies = append(newDependencies, v)
 		} else if !reflect.DeepEqual(v, dependency) {
 			updatedDependencies = append(updatedDependencies, dependency)
+		} else {
+			existingDependencies = append(existingDependencies, dependency)
 		}
 	}
 
-	return newDependencies, updatedDependencies, nil
+	return newDependencies, updatedDependencies, existingDependencies, nil
 }
 
-func updateInStore(rw manager.ReadWriter, newDependencies []dependency.Spec, updatedDependencies []dependency.Spec) error {
+func updateInStore(rw manager.ReadWriter, newDependencies []dependency.Spec, updatedDependencies []dependency.Spec, existingDependencies []dependency.Spec) error {
 	dependencies := make([]dependency.Spec, 0)
 	dependencies = append(dependencies, newDependencies...)
 	dependencies = append(dependencies, updatedDependencies...)
+	dependencies = append(dependencies, existingDependencies...)
 
 	manifest := dependency.Manifest{Dependencies: dependencies}
 	return rw.Write(manifest)
