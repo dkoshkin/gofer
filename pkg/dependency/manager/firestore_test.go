@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/dkoshkin/gofer/pkg/dependency"
 	"math/rand"
@@ -11,22 +12,27 @@ import (
 )
 
 const (
-	datastoreCredentialsJSONEnv = "DATASTORE_CREDENTIALS_BASE64"
-	datastoreProjectIDEnv       = "DATASTORE_PROJECT_ID"
+	datastoreCredentialsBase64Env = "DATASTORE_CREDENTIALS_BASE64"
+	datastoreProjectIDEnv         = "DATASTORE_PROJECT_ID"
 
 	collection = "dependencies-test"
 )
 
 func TestWriteRead(t *testing.T) {
-	credentialsJSONBytes := []byte(os.Getenv(datastoreCredentialsJSONEnv))
-	if len(credentialsJSONBytes) == 0 {
-		t.Fatalf("%s is not set", datastoreCredentialsJSONEnv)
-
+	var credentialsJSONBytes []byte
+	credentialsBase64Bytes := os.Getenv(datastoreCredentialsBase64Env)
+	if len(credentialsBase64Bytes) == 0 {
+		t.Fatalf("%s is not set", datastoreCredentialsBase64Env)
+	} else {
+		var err error
+		credentialsJSONBytes, err = base64.StdEncoding.DecodeString(credentialsBase64Bytes)
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 	projectID := os.Getenv(datastoreProjectIDEnv)
 	if len(projectID) == 0 {
 		t.Fatalf("%s is not set", datastoreProjectIDEnv)
-
 	}
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
